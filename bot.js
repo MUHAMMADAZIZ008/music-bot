@@ -52,20 +52,19 @@ bot.on('message', async (msg) => {
   const query = msg.text;
 
   try {
-    const outputFileName = `${Date.now()}_${query.replace(/[^a-zA-Z0-9]/g, '_')}.mp3`;
+    const outputFileName = `${Date.now()}_${query.replace(/[^\w\s]/gi, '').replace(/\s+/g, '_')}.mp3`;
     const outputPath = path.join(__dirname, outputFileName);
 
     bot.sendMessage(chatId, `🔍 \"${query}\" qo'shig'ini izlayapman...`);
 
     const searchResult = await ytSearch(query);
-    if (!searchResult.videos.length) {
+    if (!searchResult || !searchResult.videos.length) {
       return bot.sendMessage(chatId, '❌ Qo‘shiq topilmadi.');
     }
 
     const video = searchResult.videos[0];
     bot.sendMessage(chatId, `🎵 Topildi: ${video.title}! Yuklab olinmoqda...`);
 
-    console.log(__dirname, 'cookies.txt');
     // Cookie-fayldan foydalanib yuklab olish
     await youtubedl(video.url, {
       extractAudio: true,
@@ -75,11 +74,14 @@ bot.on('message', async (msg) => {
     });
 
     bot.sendMessage(chatId, '✅ Yuklab olindi! MP3 formatda jo‘natmoqdaman...');
-    bot.sendAudio(chatId, outputPath).then(() => {
-      fs.unlinkSync(outputPath);
+    await bot.sendAudio(chatId, outputPath);
+
+    // Faylni o‘chirish
+    fs.unlink(outputPath, (err) => {
+      if (err) console.error('Faylni o‘chirishda xatolik:', err);
     });
   } catch (error) {
     console.error('Xatolik:', error);
-    bot.sendMessage(chatId, '❌ Yuklashda xatolik yuz berdi.');
+    bot.sendMessage(chatId, `❌ Yuklashda xatolik: ${error.message || 'Noma’lum xatolik'}`);
   }
 });
