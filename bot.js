@@ -45,8 +45,6 @@ const youtubedl = require('youtube-dl-exec');
 //   }
 // });
 
-
-
 bot.on('message', async (msg) => {
   const chatId = msg.chat.id;
   const query = msg.text;
@@ -69,7 +67,7 @@ bot.on('message', async (msg) => {
     await youtubedl(video.url, {
       extractAudio: true,
       audioFormat: 'mp3',
-      cookies: path.join(__dirname, 'cookies.txt'),
+      cookies: path.join(__dirname, 'cookies.txt'), // Cookies faylni ulash
       output: outputPath,
     });
 
