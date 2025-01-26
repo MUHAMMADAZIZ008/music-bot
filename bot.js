@@ -65,6 +65,7 @@ bot.on('message', async (msg) => {
     const video = searchResult.videos[0];
     bot.sendMessage(chatId, `🎵 Topildi: ${video.title}! Yuklab olinmoqda...`);
 
+    console.log(__dirname, 'cookies.txt');
     // Cookie-fayldan foydalanib yuklab olish
     await youtubedl(video.url, {
       extractAudio: true,
@@ -72,7 +73,6 @@ bot.on('message', async (msg) => {
       cookies: path.join(__dirname, 'cookies.txt'),
       output: outputPath,
     });
-    console.log(__dirname, 'cookies.txt');
 
     bot.sendMessage(chatId, '✅ Yuklab olindi! MP3 formatda jo‘natmoqdaman...');
     bot.sendAudio(chatId, outputPath).then(() => {
