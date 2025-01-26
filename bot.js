@@ -69,7 +69,7 @@ bot.on('message', async (msg) => {
     await youtubedl(video.url, {
       extractAudio: true,
       audioFormat: 'mp3',
-      cookies: '/path/to/cookies.txt',
+      cookies: path.join(__dirname, 'cookies.txt'),
       output: outputPath,
     });
 
